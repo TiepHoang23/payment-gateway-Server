@@ -16,14 +16,14 @@ async function getMyCart(req, res) {
     res.json({ status: false, message: error });
   }
 }
-async function getMyHistoryPayment(req, res) {
+async function getHistoryPayment(req, res) {
   try {
     const userId = req.userId;
-    const cart = await Payment.find({ userId }).lean();
-    if (!cart) {
-      res.json({ status: false, message: 'Cant find cart' });
+    const history = await Payment.find({ userId }).lean();
+    if (!history) {
+      res.json({ status: false, message: 'Cant find history' });
     }
-    res.json({ status: true, myCard: cart });
+    res.json({ status: true, historyPayment: history });
   } catch (error) {
     res.json({ status: false, message: error });
   }
@@ -45,6 +45,12 @@ async function paymentByPaypal(req, res) {
     }));
 
     const paymentResponse = await createPaypalPayment(itemList, cart.total);
+
+    await Payment.create({
+      userId: req.userId,
+      paymentId: paymentResponse.paymentId,
+      createdAt: Date.now(),
+    });
     return res.send(paymentResponse);
   } catch (error) {
     res.json({ status: false, error: error.message });
@@ -63,11 +69,15 @@ async function getResponsePayment(req, res) {
     }
 
     const { id, create_time, transactions } = payment;
-    const historyPayment = await Payment.create({
-      paymentId: id,
-      createdAt: create_time,
-      transactions: transactions,
-    });
+    await Payment.findOneAndUpdate(
+      {
+        paymentId,
+      },
+      {
+        transactions: transactions,
+        status: 'Success',
+      }
+    );
     res.render('payment-success', { paymentId, transactions });
   } catch (error) {
     res.json({ status: false, error: error.message });
@@ -78,5 +88,5 @@ module.exports = {
   getMyCart,
   paymentByPaypal,
   getResponsePayment,
-  getMyHistoryPayment,
+  getHistoryPayment,
 };

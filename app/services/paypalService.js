@@ -59,6 +59,7 @@ async function createPaypalPayment(itemList, total) {
         resolve({
           status: true,
           message: 'Create Payment Success!',
+          paymentId: payment.id,
           urlRedirect: approvalUrl.href,
         });
       }

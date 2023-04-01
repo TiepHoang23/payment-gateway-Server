@@ -10,4 +10,5 @@ paymentRouter.post(
   paymentController.paymentByPaypal
 );
 paymentRouter.get('/paymentSuccess', paymentController.getResponsePayment);
+paymentRouter.get('/paymentHistory', paymentController.getHistoryPayment);
 module.exports = paymentRouter;
