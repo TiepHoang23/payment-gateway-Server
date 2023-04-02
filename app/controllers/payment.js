@@ -8,9 +8,6 @@ async function getMyCart(req, res) {
   try {
     const userId = req.userId;
     const cart = await Cart.findOne({ userId }).lean();
-    if (!cart) {
-      res.json({ status: false, message: 'Cant find cart' });
-    }
     res.json({ status: true, myCard: cart });
   } catch (error) {
     res.json({ status: false, message: error });
