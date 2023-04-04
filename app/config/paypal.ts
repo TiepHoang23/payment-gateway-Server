@@ -1,4 +1,4 @@
-module.exports = {
+export default {
   paypal: {
     mode: 'sandbox', //sandbox or live
     client_id:

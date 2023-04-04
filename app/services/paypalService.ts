@@ -1,8 +1,12 @@
-const paypal = require('paypal-rest-sdk');
-const config = require('../config');
+import paypal, { Payment } from 'paypal-rest-sdk';
+import config from '../config/index.js';
+
 paypal.configure(config.paypal);
 
-async function executePaypalPayment(paymentId, payerId, total) {
+async function executePaypalPayment(
+  paymentId: string,
+  payerId: string,
+): Promise<{ payment: Payment | null; error: any }> {
   const execute_payment_json = {
     payer_id: payerId,
   };
@@ -11,7 +15,7 @@ async function executePaypalPayment(paymentId, payerId, total) {
     paypal.payment.execute(
       paymentId,
       execute_payment_json,
-      (error, payment) => {
+      (error: any, payment: Payment) => {
         if (error) {
           resolve({ payment: null, error });
         } else {
@@ -21,7 +25,26 @@ async function executePaypalPayment(paymentId, payerId, total) {
     );
   });
 }
-async function createPaypalPayment(itemList, total) {
+
+interface Item {
+  name: string;
+  sku: string;
+  price: string;
+  currency: string;
+  quantity: number;
+}
+
+interface CreatePaypalPaymentResponse {
+  status: boolean;
+  message: string;
+  paymentId?: string;
+  urlRedirect?: string;
+}
+
+async function createPaypalPayment(
+  itemList: Item[],
+  total: number
+): Promise<CreatePaypalPaymentResponse> {
   const create_payment_json = {
     intent: 'sale',
     payer: {
@@ -45,12 +68,13 @@ async function createPaypalPayment(itemList, total) {
     ],
   };
 
-  return new Promise((resolve, reject) => {
-    paypal.payment.create(create_payment_json, (error, payment) => {
+  return new Promise<CreatePaypalPaymentResponse>((resolve, reject) => {
+    
+    paypal.payment.create(create_payment_json, (error: any, payment: Payment) => {
       if (error) {
         reject({ status: false, message: 'payment error' });
       } else {
-        const approvalUrl = payment.links.find(
+        const approvalUrl = payment.links?.find(
           (link) => link.rel === 'approval_url'
         );
         if (!approvalUrl) {
@@ -60,13 +84,12 @@ async function createPaypalPayment(itemList, total) {
           status: true,
           message: 'Create Payment Success!',
           paymentId: payment.id,
-          urlRedirect: approvalUrl.href,
+          urlRedirect: approvalUrl?.href,
         });
       }
     });
   });
 }
-module.exports = {
-  createPaypalPayment,
-  executePaypalPayment,
-};
+
+export default { createPaypalPayment, executePaypalPayment };
+export  { createPaypalPayment, executePaypalPayment };

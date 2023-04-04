@@ -1,5 +1,5 @@
-const crypto = require('crypto');
-const redis_client = require('../redis');
+import crypto from 'crypto';
+import redis_client from '../redis.js';
 function hashToken(token) {
   return crypto.createHmac('sha256', 'secretKey').update(token).digest('hex');
 }
@@ -15,7 +15,5 @@ async function setBlockedToken(token, expiresIn) {
   await redis_client.setEx(hashedToken, expiresIn, '1');
 }
 
-module.exports = {
-  getBlockedToken,
-  setBlockedToken,
-};
+export  { getBlockedToken, setBlockedToken };
+export default  { getBlockedToken, setBlockedToken };

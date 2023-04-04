@@ -1,6 +1,7 @@
-const { User } = require('../database/models');
+import { Request, Response } from 'express';
+import { User } from '../database/models/index.js';
 
-async function getMe(req, res) {
+async function getMe(req: Request, res: Response): Promise<void> {
   try {
     const id = req.userId;
     const data = await User.findById({ id });
@@ -15,6 +16,6 @@ async function getMe(req, res) {
   }
 }
 
-module.exports = {
+export default {
   getMe,
 };
