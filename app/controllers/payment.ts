@@ -24,9 +24,10 @@ async function getHistoryPayment(req: Request, res: Response) {
       res.json({ status: false, message: 'Error Credential' });
     }
     const paymentInfo = await Payment.find({ userId })
-      .populate('transactions')
       .lean();
-    if (!history) {
+  
+      
+    if (!paymentInfo) {
       res.json({ status: false, message: 'Cant find history' });
     }
     res.json({ status: true, historyPayment: paymentInfo });
@@ -111,8 +112,8 @@ async function handlePaymentSuccess(req: Request, res: Response) {
   const lastPayment = await Payment.findOne({
     cartId,
   }).lean();
-
-  res.render('payment', { lastPayment });
+res.send({lastPayment});
+  // res.render('payment', { lastPayment });
  
 }
 export default {
