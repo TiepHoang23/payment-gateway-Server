@@ -35,3 +35,9 @@ During the development of our payment gateway, we faced several challenges, incl
 * Understanding the PayPal API and how to integrate it with our web application
 * Storing payment details securely in the database
 * Handling errors and exceptions when processing payments
+### Flow of PayPal Subscription
+- User selects a subscription plan and redirected to PayPal to enter their payment information.
+- PayPal processes the payment and sends a notification to the web application.
+- The web application stores the subscription details in its database and sets up the subscription with PayPal.
+- PayPal sends a notification to the web application when a new payment is made.
+- The web application processes the payment and updates the subscription details in its database and sends notifications to the user and the administrator when necessary.
