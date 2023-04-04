@@ -57,6 +57,7 @@ async function paymentByPaypal(req: Request, res: Response) {
 
     await Payment.create({
       userId: req.userId,
+      cartId: cart.id
       paymentId: paymentResponse.paymentId,
       createdAt: Date.now(),
     });
@@ -92,7 +93,9 @@ async function getResponsePayment(req: Request, res: Response) {
       }
     );
     // res.json({ status: true, paymentInfo });
-    res.redirect('/success');
+    res.redirect(
+      `http://localhost:8000/api/payment/success/?idCard=${paymentInfo.cartId}`
+    );
     // res.json('payment-success', { paymentId, transactions });
   } catch (error) {
     res.json({ status: false, error: error.message });
@@ -103,14 +106,14 @@ function handlePaymentCancel(req: Request, res: Response) {
   res.send({ status: false, message: 'Payment cancelled!' });
 }
 async function handlePaymentSuccess(req: Request, res: Response) {
-  console.log(1);
+  const cartId = req.query?.idCard;
 
-  const lastPayment = await Payment.findOne({ userId: req.userId }).lean();
-  res.send({
-    status: false,
-    message: 'Payment Successful!',
-    paymentInfo: lastPayment,
-  });
+  const lastPayment = await Payment.findOne({
+    cartId,
+  }).lean();
+
+  res.render('payment', { lastPayment });
+ 
 }
 export default {
   getMyCart,

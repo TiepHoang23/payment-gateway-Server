@@ -11,7 +11,9 @@ const PaymentSchema = new mongoose.Schema({
     type: String,
     required: true,
   },
-
+  cartId: {
+    type: String,
+  },
   createdAt: {
     type: Date,
     default: Date.now(),
