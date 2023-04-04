@@ -112,8 +112,8 @@ async function handlePaymentSuccess(req: Request, res: Response) {
   const lastPayment = await Payment.findOne({
     cartId,
   }).lean();
-res.send({lastPayment});
-  // res.render('payment', { lastPayment });
+// res.send({lastPayment});
+  res.render('payment', { lastPayment });
  
 }
 export default {
